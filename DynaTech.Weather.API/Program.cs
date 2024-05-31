@@ -4,7 +4,6 @@ using DynaTech.Weather.Infrastructure.Interfaces;
 using DynaTech.Weather.Infrastructure.Profiles;
 using DynaTech.Weather.Infrastructure.Repositories;
 using DynaTech.Weather.Infrastructure.Settings;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace DynaTech.Weather.API
 {
@@ -22,8 +21,8 @@ namespace DynaTech.Weather.API
 
             builder.Services.Configure<DatabaseConfigurationSection>(builder.Configuration.GetSection("DatabaseConfiguration"));
 
-            builder.Services.AddScoped<IForecastsService, ForecastsService>();
-            builder.Services.AddScoped<IForecastRepository, ForecastRepository>();
+            builder.Services.AddScoped<IWeatherForecastsService, WeatherForecastsService>();
+            builder.Services.AddScoped<IWeatherForecastRepository, WeatherForecastRepository>();
             builder.Services.AddSingleton<IDatabaseConnectionFactory, DatabaseConnectionFactory>();
 
             List<Type> scanTypes = new List<Type> { typeof(InfrastructureProfile) };

@@ -8,7 +8,7 @@ namespace DynaTech.Weather.Infrastructure.Profiles
     {
         public InfrastructureProfile()
         {
-            CreateMap<ForecastDto, Forecast>().ReverseMap();
+            CreateMap<WeatherForecastDto, WeatherForecast>().ReverseMap();
         }
     }
 }

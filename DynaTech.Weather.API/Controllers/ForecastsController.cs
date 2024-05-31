@@ -9,20 +9,54 @@ namespace DynaTech.Weather.API.Controllers
     public class ForecastsController : ControllerBase
     {
         private readonly ILogger<ForecastsController> _logger;
-        private readonly IForecastsService _forecastsService;
+        private readonly IWeatherForecastsService _forecastsService;
 
         public ForecastsController(
             ILogger<ForecastsController> logger,
-            IForecastsService forecastsService)
+            IWeatherForecastsService forecastsService)
         {
             _logger = logger;
             _forecastsService = forecastsService;
         }
 
-        [HttpGet(Name = "GetWeatherForecast")]
-        public IEnumerable<Forecast> Get()
+        [HttpGet]
+        public IEnumerable<WeatherForecast> Get()
         {
-            return _forecastsService.GetForecasts();
+            try
+            {
+                return _forecastsService.GetWeatherForecasts();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error on {nameof(Get)}, error message: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("{forecastId}")]
+        public WeatherForecast Get(int weatherForecastId)
+        {
+            try
+            {
+                return _forecastsService.GetWeatherForecast(weatherForecastId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error on {nameof(Get)}, error message: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Add(AddWeatherForecastRequest request, CancellationToken cancellationToken)
+        {
+            if (request is null || string.IsNullOrWhiteSpace(request.Summary) || !request.DateAndTime.HasValue 
+                || request.DateAndTime.Value == DateTime.MinValue || !request.TemperatureC.HasValue) 
+            {
+                return BadRequest("Invalid request - some properties missing or with improper values.");
+            }
+
+            return Ok(await _forecastsService.AddWeatherForecast(request, cancellationToken));
         }
     }
 }
